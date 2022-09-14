@@ -1,9 +1,11 @@
 //import
 const mysql = require('mysql2')
-// const inquirer = require('inquirer')
-const cTable = require('console.table')
+const inquirer = require('inquirer')
+const cTable = require('console.table');
+// const { config } = require('dotenv');
 
 require('dotenv').config();
+// console.log(config)
 
 //To connect to database
 const connection = mysql.createConnection({
@@ -17,7 +19,17 @@ const connection = mysql.createConnection({
 connection.connect((err) => {
     if (err) throw err;
     console.log('Welcome to Employee Tracker!');
+    promptUser();
 });
 
+const promptUser = () => {
+    return inquirer.prompt([
+        {
+            type: 'list',
+            name: ''
+        }
 
 
+
+    ])
+ }
