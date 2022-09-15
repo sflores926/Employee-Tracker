@@ -1,6 +1,6 @@
 //import
-const mysql = require('mysql2')
-const inquirer = require('inquirer')
+const mysql = require('mysql2');
+const inquirer = require('inquirer');
 const cTable = require('console.table');
 // const { config } = require('dotenv');
 
@@ -22,14 +22,27 @@ connection.connect((err) => {
     promptUser();
 });
 
+//Create an array of questions with inquirer
 const promptUser = () => {
-    return inquirer.prompt([
+     inquirer.prompt([
         {
             type: 'list',
-            name: ''
+            name: 'choices',
+            message: 'What would you like to do?',
+            choices: ['View All Employees', 'Add Employee', 'Update Employee Role', 'View All Roles', 'Add Role', 'View All Departments', 'Add Department', 'Quit']
         }
 
 
 
     ])
+
+    .then((answers) => {
+        const {choices} = answers;
+
+        if(choices === 'View All Employees') {
+            showEmployees();
+        }
+
+
+    })
  }
