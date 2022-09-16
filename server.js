@@ -20,30 +20,58 @@ const connection = mysql.createConnection({
 connection.connect((err) => {
     if (err) throw err;
     console.log('Welcome to Employee Tracker!');
-    // promptUser();
+    promptUser();
 });
 
-// //Create an array of questions with inquirer
-// const promptUser = () => {
-//      inquirer.prompt([
-//         {
-//             type: 'list',
-//             name: 'choices',
-//             message: 'What would you like to do?',
-//             choices: ['View All Employees', 'Add Employee', 'Update Employee Role', 'View All Roles', 'Add Role', 'View All Departments', 'Add Department', 'Quit']
-//         }
+//Create an array of questions with inquirer
+const promptUser = () => {
+    inquirer.prompt([
+        {
+            type: 'list',
+            name: 'choices',
+            message: 'What would you like to do?',
+            choices: ['View All Employees', 'Add Employee', 'Update Employee Role', 'View All Roles', 'Add Role', 'View All Departments', 'Add Department', 'Quit']
+        }
 
 
 
-//     ])
+    ])
 
-//     .then((answers) => {
-//         const {choices} = answers;
+        .then((answers) => {
+            const { choices } = answers;
 
-//         if(choices === 'View All Employees') {
-//             showEmployees();
-//         }
+            if (choices === 'View All Employees') {
+                showEmployees();
+            }
 
 
-//     })
-//  }
+        })
+}
+
+showEmployees = () => {
+    console.log('Showing Employees');
+
+    const sql = `SELECT employee.id, 
+                      employee.first_name, 
+                      employee.last_name, 
+                      role.title, 
+                      department.dept_name AS department,
+                      role.salary, 
+                      CONCAT (manager.first_name, " ", manager.last_name) AS manager
+               FROM employee
+                      LEFT JOIN role ON employee.role_id = role.id
+                      LEFT JOIN department ON role.department_id = department.id
+                      LEFT JOIN employee manager ON employee.manager_id = manager.id`;
+
+    connection.query(sql, (err, rows) => {
+        if (err) throw err;
+        console.table(rows);
+        promptUser();
+        // connection.promise().query(sql, (err, rows) => {
+        // if (err) throw err; 
+        // console.table(rows);
+        // promptUser();
+
+    });
+
+};
