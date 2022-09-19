@@ -144,28 +144,27 @@ addEmployee = () => {
         }
 
     ])
-        .then(answers => {
-            const sql = `SELECT employee.id, 
-            CONCAT (employee.first_name, " ", employee.last_name) AS name, 
-            role.title, 
-            role.salary,
-            CONCAT (manager.first_name, " ", manager.last_name) AS manager,
-            department.dept_name AS department 
-            FROM employee 
-             JOIN role ON employee.role_id = role.id
-             JOIN department ON role.department_id = department.id
-             LEFT JOIN employee manager ON employee.manager_id = manager.id`;
+        .then((answers) => {
+            // const sql = `SELECT employee.id, 
+            // CONCAT (employee.first_name, " ", employee.last_name) AS name, 
+            // role.title, 
+            // role.salary,
+            // CONCAT (manager.first_name, " ", manager.last_name) AS manager,
+            // department.dept_name AS department 
+            // FROM employee 
+            // JOIN role ON employee.role_id = role.id
+            // JOIN department ON role.department_id = department.id
+            // LEFT JOIN employee manager ON employee.manager_id = manager.id`;
 
             connection.query(
-                "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)",
-                (sql, (err, answers) => {
+                `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)`,
+                [answers.first_name, answers.last_name, answers.role, answers.manager], (err, answers) => {
 
 
                     if (err) throw err;
                     console.table(answers);
-                    console.log('Employee has been added')
                     promptUser();
-                })
+                }
             )
         });
 };
@@ -184,27 +183,27 @@ updateEmployeeRole = () => {
             message: 'Which is the role id you would like to assign selected employee?',
         },
     ])
-        .then(answers => {
-            const sql =
-                `SELECT employee.id, 
-               CONCAT (employee.first_name, " ", employee.last_name) AS name, 
-               role.title, 
-               role.salary,
-               CONCAT (manager.first_name, " ", manager.last_name) AS manager,
-               department.dept_name AS department 
-               FROM employee 
-               JOIN role ON employee.role_id = role.id
-               JOIN department ON role.department_id = department.id
-               LEFT JOIN employee manager ON employee.manager_id = manager.id`;
+        .then((answers) => {
+            // const sql =
+            //     `SELECT employee.id, 
+            //    CONCAT (employee.first_name, " ", employee.last_name) AS name, 
+            //    role.title, 
+            //    role.salary,
+            //    CONCAT (manager.first_name, " ", manager.last_name) AS manager,
+            //    department.dept_name AS department 
+            //    FROM employee 
+            //    JOIN role ON employee.role_id = role.id
+            //    JOIN department ON role.department_id = department.id
+            //    LEFT JOIN employee manager ON employee.manager_id = manager.id`;
 
 
 
             connection.query("UPDATE employee SET role_id = ? WHERE id = ? ",
-                (sql, (err, answers) => {
+            [answers.employee, answers.role], (err, answers) => {
                     if (err) throw (err);
                     console.table(answers)
                     promptUser();
-                })
+                }
             )
         })
 };
@@ -267,14 +266,15 @@ addRole = () => {
                             FROM role JOIN department 
                             ON role.department_id = department.id`;
 
-            connection.query("INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)", (sql, (err, answers) => {
+            connection.query("INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)", 
+            [answers.role, answers.salary, answers.department], (err, answers) => {
 
                 if (err) throw err;
                 console.table(answers);
                 console.log('Role has been added')
                 promptUser();
             })
-            )
+            
 
         })
 
@@ -315,7 +315,7 @@ addDepartment = () => {
 
             connection.query(
                 "INSERT INTO department (department) VALUES (?)",
-                (sql, (err, answers) => {
+                [answers.department], (err, answers) => {
 
 
                     if (err) throw err;
@@ -323,7 +323,7 @@ addDepartment = () => {
                     console.log('Department has been added')
                     promptUser();
                 })
-            )
+            
         });
 };
 
