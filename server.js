@@ -85,6 +85,7 @@ const promptUser = () => {
         })
 }
 
+//function to show employees
 showEmployees = () => {
     console.log('Showing Employees');
 
@@ -113,6 +114,7 @@ showEmployees = () => {
 
 };
 
+//function to add employee
 addEmployee = () => {
 
     inquirer.prompt([
@@ -168,6 +170,7 @@ addEmployee = () => {
         });
 };
 
+//function to update employee role
 updateEmployeeRole = () => {
     inquirer.prompt([
         {
@@ -206,6 +209,8 @@ updateEmployeeRole = () => {
         })
 };
 
+
+//function to view all roles
 viewAllRoles = () => {
     console.log('Showing Employees and their Roles');
 
@@ -232,6 +237,8 @@ viewAllRoles = () => {
     });
 };
 
+
+//function to add a role
 addRole = () => {
     inquirer.prompt([
         {
@@ -274,6 +281,8 @@ addRole = () => {
 
 };
 
+
+//function to view all departments
 viewAllDepartments = () => {
     console.log('Showing Employees and their Departments');
 
@@ -292,6 +301,7 @@ viewAllDepartments = () => {
     })
 };
 
+//function to add a department
 addDepartment = () => {
     inquirer.prompt([
         {
@@ -317,6 +327,8 @@ addDepartment = () => {
         });
 };
 
+
+//function to leave employee tracker
 quit = () => {
     console.log('Thank you for using Employee Tracker!')
     connection.end();
