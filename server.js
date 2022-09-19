@@ -42,6 +42,10 @@ const promptUser = () => {
 
             if (choices === 'View All Employees') {
                 showEmployees();
+
+            } else if (choices === 'Add Employee') {
+                addEmployee();
+
             }
 
 
@@ -58,7 +62,7 @@ showEmployees = () => {
                       department.dept_name AS department,
                       role.salary, 
                       CONCAT (manager.first_name, " ", manager.last_name) AS manager
-               FROM employee
+                      FROM employee
                       LEFT JOIN role ON employee.role_id = role.id
                       LEFT JOIN department ON role.department_id = department.id
                       LEFT JOIN employee manager ON employee.manager_id = manager.id`;
@@ -75,3 +79,57 @@ showEmployees = () => {
     });
 
 };
+
+addEmployee = () => {
+
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'first_name',
+            message: "What is the Employee's first name?"
+        },
+        {
+            type: 'input',
+            name: 'last_name',
+            message: "What is the Employee's last name?"
+        },
+        {
+            type: 'number',
+            name: 'role',
+            message: "What is the Employee's role? ",
+            
+
+        },
+        {
+            type: 'number',
+            name: 'manager',
+            message: "Who is the employee's manager?",
+           
+
+        }
+
+    ])
+        .then(answers => {
+            const sql =      `SELECT employee.id, 
+            CONCAT (employee.first_name, " ", employee.last_name) AS name, 
+            role.title, 
+            role.salary,
+            CONCAT (manager.first_name, " ", manager.last_name) AS manager,
+            department.name AS department 
+            FROM employee 
+             JOIN role ON employee.role_id = role.id
+             JOIN department ON role.department_id = department.id
+             LEFT JOIN employee manager ON employee.manager_id = manager.id`;
+            
+             connection.query(
+                "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)",
+                 (sql, (err,answers) => {
+
+                
+                if (err) throw err;
+                console.table(answers);
+                promptUser();
+            })
+             )
+        });
+}
