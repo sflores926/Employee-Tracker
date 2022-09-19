@@ -50,16 +50,20 @@ const promptUser = () => {
             if (choices === 'View All Employees') {
                 showEmployees();
 
-            } 
+            }
             if (choices === 'Add Employee') {
                 addEmployee();
 
-            } 
+            }
             if (choices === 'Update Employee Role') {
                 updateEmployeeRole();
             }
             if (choices === 'View All Roles') {
                 viewAllRoles();
+            }
+
+            if (choices === 'Add Role') {
+                addRole();
             }
 
 
@@ -142,6 +146,7 @@ addEmployee = () => {
 
                     if (err) throw err;
                     console.table(answers);
+                    console.log('Employee has been added')
                     promptUser();
                 })
             )
@@ -161,7 +166,8 @@ addEmployee = () => {
             },
         ])
             .then(answers => {
-                const sql = `SELECT employee.id, 
+                const sql =
+                    `SELECT employee.id, 
                CONCAT (employee.first_name, " ", employee.last_name) AS name, 
                role.title, 
                role.salary,
@@ -182,9 +188,9 @@ addEmployee = () => {
                     })
                 )
             })
-    }
+    };
 
-     viewAllRoles = () => {
+    viewAllRoles = () => {
         console.log('Showing Employees and their Roles');
 
         const sql = `SELECT employee.id, 
@@ -199,14 +205,56 @@ addEmployee = () => {
                       LEFT JOIN department ON role.department_id = department.id
                       LEFT JOIN employee manager ON employee.manager_id = manager.id`;
 
-    connection.query(sql, (err, rows) => {
-        if (err) throw err;
-        console.table(rows);
-        promptUser();
+        connection.query(sql, (err, rows) => {
+            if (err) throw err;
+            console.table(rows);
+            promptUser();
 
 
-   
 
-    });
+
+        });
+    };
+
+    addRole = () => {
+        inquirer.prompt([
+            {
+                type: 'input',
+                name: 'role',
+                message: 'What is the name of the role you would like to add?'
+            },
+            {
+                type: 'input',
+                name: 'salary',
+                message: 'What is the salary of the role?'
+            },
+            {
+                type: 'input',
+                name: 'department',
+                message: 'What department does the role belong to?'
+            }
+        ])
+            .then((answers) => {
+
+                const sql =
+                    `SELECT role.id, 
+                            role.title, 
+                            role.salary, 
+                            department.dept_name AS department 
+                            FROM role JOIN department 
+                            ON role.department_id = department.id`;
+                
+            connection.query("INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)", (sql, (err, answers) => {
+
+                if (err) throw err;
+                    console.table(answers);
+                    console.log('Role has been added')
+                    promptUser();
+            })
+            )
+
+    })
+
+
     }
 }
