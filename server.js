@@ -30,7 +30,14 @@ const promptUser = () => {
             type: 'list',
             name: 'choices',
             message: 'What would you like to do?',
-            choices: ['View All Employees', 'Add Employee', 'Update Employee Role', 'View All Roles', 'Add Role', 'View All Departments', 'Add Department', 'Quit']
+            choices: ['View All Employees',
+                'Add Employee',
+                'Update Employee Role',
+                'View All Roles',
+                'Add Role',
+                'View All Departments',
+                'Add Department',
+                'Quit']
         }
 
 
@@ -43,9 +50,16 @@ const promptUser = () => {
             if (choices === 'View All Employees') {
                 showEmployees();
 
-            } else if (choices === 'Add Employee') {
+            } 
+            if (choices === 'Add Employee') {
                 addEmployee();
 
+            } 
+            if (choices === 'Update Employee Role') {
+                updateEmployeeRole();
+            }
+            if (choices === 'View All Roles') {
+                viewAllRoles();
             }
 
 
@@ -97,39 +111,102 @@ addEmployee = () => {
             type: 'number',
             name: 'role',
             message: "What is the Employee's role? ",
-            
+
 
         },
         {
             type: 'number',
             name: 'manager',
             message: "Who is the employee's manager?",
-           
+
 
         }
 
     ])
         .then(answers => {
-            const sql =      `SELECT employee.id, 
+            const sql = `SELECT employee.id, 
             CONCAT (employee.first_name, " ", employee.last_name) AS name, 
             role.title, 
             role.salary,
             CONCAT (manager.first_name, " ", manager.last_name) AS manager,
-            department.name AS department 
+            department.dept_name AS department 
             FROM employee 
              JOIN role ON employee.role_id = role.id
              JOIN department ON role.department_id = department.id
              LEFT JOIN employee manager ON employee.manager_id = manager.id`;
-            
-             connection.query(
-                "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)",
-                 (sql, (err,answers) => {
 
-                
-                if (err) throw err;
-                console.table(answers);
-                promptUser();
-            })
-             )
+            connection.query(
+                "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)",
+                (sql, (err, answers) => {
+
+
+                    if (err) throw err;
+                    console.table(answers);
+                    promptUser();
+                })
+            )
         });
+
+    updateEmployeeRole = () => {
+        inquirer.prompt([
+            {
+                type: 'input',
+                name: 'employee',
+                message: 'What is the employee id you would like to update?',
+            },
+            {
+                type: 'input',
+                name: 'role',
+                message: 'Which is the role id you would like to assign selected employee?',
+            },
+        ])
+            .then(answers => {
+                const sql = `SELECT employee.id, 
+               CONCAT (employee.first_name, " ", employee.last_name) AS name, 
+               role.title, 
+               role.salary,
+               CONCAT (manager.first_name, " ", manager.last_name) AS manager,
+               department.dept_name AS department 
+               FROM employee 
+               JOIN role ON employee.role_id = role.id
+               JOIN department ON role.department_id = department.id
+               LEFT JOIN employee manager ON employee.manager_id = manager.id`;
+
+
+
+                connection.query("UPDATE employee SET role_id = ? WHERE id = ? ",
+                    (sql, (err, answers) => {
+                        if (err) throw (err);
+                        console.table(answers)
+                        promptUser();
+                    })
+                )
+            })
+    }
+
+     viewAllRoles = () => {
+        console.log('Showing Employees and their Roles');
+
+        const sql = `SELECT employee.id, 
+                      employee.first_name, 
+                      employee.last_name, 
+                      role.title, 
+                      department.dept_name AS department,
+                      role.salary, 
+                      CONCAT (manager.first_name, " ", manager.last_name) AS manager
+                      FROM employee
+                      LEFT JOIN role ON employee.role_id = role.id
+                      LEFT JOIN department ON role.department_id = department.id
+                      LEFT JOIN employee manager ON employee.manager_id = manager.id`;
+
+    connection.query(sql, (err, rows) => {
+        if (err) throw err;
+        console.table(rows);
+        promptUser();
+
+
+   
+
+    });
+    }
 }
