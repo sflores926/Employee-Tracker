@@ -65,6 +65,9 @@ const promptUser = () => {
             if (choices === 'Add Role') {
                 addRole();
             }
+            if (choices === 'View All Departments') {
+                viewAllDepartments();
+            }
 
 
         })
@@ -243,18 +246,39 @@ addEmployee = () => {
                             department.dept_name AS department 
                             FROM role JOIN department 
                             ON role.department_id = department.id`;
-                
-            connection.query("INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)", (sql, (err, answers) => {
 
-                if (err) throw err;
+                connection.query("INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)", (sql, (err, answers) => {
+
+                    if (err) throw err;
                     console.table(answers);
                     console.log('Role has been added')
                     promptUser();
+                })
+                )
+
             })
-            )
-
-    })
 
 
+    };
+
+    viewAllDepartments = () => {
+        console.log('Showing Employees and their Departments');
+
+
+        const sql = `Select employee.first_name,
+        employee.last_name,
+        department.dept_name AS department
+        FROM employee
+        LEFT JOIN role ON employee.role_id = role.id
+        LEFT JOIN department ON role.department_id = department.id`;
+
+        connection.query(sql,(err, rows) => {
+            if (err) throw err;
+            console.table(rows);
+            promptUser();
+        })
     }
+
+
+
 }
