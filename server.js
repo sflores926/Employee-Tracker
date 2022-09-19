@@ -311,10 +311,10 @@ addDepartment = () => {
         }
     ])
         .then(answers => {
-            const sql = 'SELECT * FROM department';
+            // const sql = 'SELECT * FROM department';
 
             connection.query(
-                "INSERT INTO department (department) VALUES (?)",
+                "INSERT INTO department (dept_name) VALUES (?)",
                 [answers.department], (err, answers) => {
 
 
