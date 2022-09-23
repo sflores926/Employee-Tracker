@@ -72,5 +72,4 @@ The following video shows the application being used from the command line:
 
 
 
-https://user-images.githubusercontent.com/106363593/191097889-adc86011-039c-4417-b6bd-f460645c01a5.mp4
 
