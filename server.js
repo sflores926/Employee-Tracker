@@ -170,6 +170,8 @@ addEmployee = () => {
 };
 
 //function to update employee role
+
+//needs help in this part to see why i get an error but list is showing wont push threw
 updateEmployeeRole = () => {
 
     const sql = `SELECT employee.id, 
@@ -177,6 +179,10 @@ updateEmployeeRole = () => {
     employee.last_name 
     FROM employee
     `;
+
+    const role =`SELECT role.id,
+    role.title
+    FROM role`;
 
     connection.query(sql, (err, rows) => {
         if (err) throw err;
@@ -187,17 +193,31 @@ updateEmployeeRole = () => {
             // console.log(tacocat, i)
             arr.push(`${tacocat.first_name} ${tacocat.last_name}`)
         })
+
+        connection.query(role, (err, rows) => {
+            if (err) throw err;
+            // console.table(rows);
+            // promptUser();
+            var arr_role = []
+            rows.forEach((mousetrap, i) => {
+                // console.log(tacocat, i)
+                arr_role.push(`${mousetrap.title}`)
+            })
+
+
+
         inquirer.prompt([
             {
                 type: 'list',
                 name: 'employee',
-                message: 'What is the employee id you would like to update?',
+                message: 'What is the employee would you like to update?',
                 choices: arr
             },
             {
-                type: 'input',
+                type: 'list',
                 name: 'role',
                 message: 'Which is the role id you would like to assign selected employee?',
+                choices: arr_role
             },
         ])
             .then((answers) => {
@@ -216,15 +236,19 @@ updateEmployeeRole = () => {
 
 
                 connection.query("UPDATE employee SET role_id = ? WHERE id = ? ",
-                    [answers.role, answers.employee], (err, answers) => {
+                [answers.role, answers.employee],(err, answers) => {
                         if (err) throw (err);
                         console.table(answers)
                         promptUser();
                     }
                 )
             })
-    })
+//this below brackets where added 
+        })
+        })
 };
+
+
 
 
 //function to view all roles
@@ -292,15 +316,12 @@ addRole = () => {
 
 //function to view all departments
 viewAllDepartments = () => {
-    console.log('Showing Employees and their Departments');
+    console.log('Showing Departments');
 
 
-    const sql = `Select employee.first_name,
-        employee.last_name,
+    const sql = `Select department.id,
         department.dept_name AS department
-        FROM employee
-        LEFT JOIN role ON employee.role_id = role.id
-        LEFT JOIN department ON role.department_id = department.id`;
+        FROM department`;
 
     connection.query(sql, (err, rows) => {
         if (err) throw err;
@@ -308,6 +329,7 @@ viewAllDepartments = () => {
         promptUser();
     })
 };
+
 
 //function to add a department
 addDepartment = () => {
