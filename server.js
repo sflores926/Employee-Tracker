@@ -171,41 +171,59 @@ addEmployee = () => {
 
 //function to update employee role
 updateEmployeeRole = () => {
-    inquirer.prompt([
-        {
-            type: 'input',
-            name: 'employee',
-            message: 'What is the employee id you would like to update?',
-        },
-        {
-            type: 'input',
-            name: 'role',
-            message: 'Which is the role id you would like to assign selected employee?',
-        },
-    ])
-        .then((answers) => {
-            // const sql =
-            //     `SELECT employee.id, 
-            //    CONCAT (employee.first_name, " ", employee.last_name) AS name, 
-            //    role.title, 
-            //    role.salary,
-            //    CONCAT (manager.first_name, " ", manager.last_name) AS manager,
-            //    department.dept_name AS department 
-            //    FROM employee 
-            //    JOIN role ON employee.role_id = role.id
-            //    JOIN department ON role.department_id = department.id
-            //    LEFT JOIN employee manager ON employee.manager_id = manager.id`;
 
+    const sql = `SELECT employee.id, 
+    employee.first_name, 
+    employee.last_name 
+    FROM employee
+    `;
 
-
-            connection.query("UPDATE employee SET role_id = ? WHERE id = ? ",
-            [answers.employee, answers.role], (err, answers) => {
-                    if (err) throw (err);
-                    console.table(answers)
-                    promptUser();
-                }
-            )
+    connection.query(sql, (err, rows) => {
+        if (err) throw err;
+        // console.table(rows);
+        // promptUser();
+        var arr = []
+        rows.forEach((tacocat, i) => {
+            // console.log(tacocat, i)
+            arr.push(`${tacocat.first_name} ${tacocat.last_name}`)
         })
+        inquirer.prompt([
+            {
+                type: 'list',
+                name: 'employee',
+                message: 'What is the employee id you would like to update?',
+                choices: arr
+            },
+            {
+                type: 'input',
+                name: 'role',
+                message: 'Which is the role id you would like to assign selected employee?',
+            },
+        ])
+            .then((answers) => {
+                // const sql =
+                //     `SELECT employee.id, 
+                //    CONCAT (employee.first_name, " ", employee.last_name) AS name, 
+                //    role.title, 
+                //    role.salary,
+                //    CONCAT (manager.first_name, " ", manager.last_name) AS manager,
+                //    department.dept_name AS department 
+                //    FROM employee 
+                //    JOIN role ON employee.role_id = role.id
+                //    JOIN department ON role.department_id = department.id
+                //    LEFT JOIN employee manager ON employee.manager_id = manager.id`;
+
+
+
+                connection.query("UPDATE employee SET role_id = ? WHERE id = ? ",
+                    [answers.role, answers.employee], (err, answers) => {
+                        if (err) throw (err);
+                        console.table(answers)
+                        promptUser();
+                    }
+                )
+            })
+    })
 };
 
 
@@ -213,17 +231,7 @@ updateEmployeeRole = () => {
 viewAllRoles = () => {
     console.log('Showing Employees and their Roles');
 
-    const sql = `SELECT employee.id, 
-                      employee.first_name, 
-                      employee.last_name, 
-                      role.title, 
-                      department.dept_name AS department,
-                      role.salary, 
-                      CONCAT (manager.first_name, " ", manager.last_name) AS manager
-                      FROM employee
-                      LEFT JOIN role ON employee.role_id = role.id
-                      LEFT JOIN department ON role.department_id = department.id
-                    LEFT JOIN employee manager ON employee.manager_id = manager.id`;
+    const sql = `SELECT role.id, role.title, department.dept_name AS department, role.salary FROM role LEFT JOIN department ON role.department_id = department.id`;
 
     connection.query(sql, (err, rows) => {
         if (err) throw err;
@@ -266,15 +274,15 @@ addRole = () => {
                             FROM role JOIN department 
                             ON role.department_id = department.id`;
 
-            connection.query("INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)", 
-            [answers.role, answers.salary, answers.department], (err, answers) => {
+            connection.query("INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)",
+                [answers.role, answers.salary, answers.department], (err, answers) => {
 
-                if (err) throw err;
-                console.table(answers);
-                console.log('Role has been added')
-                promptUser();
-            })
-            
+                    if (err) throw err;
+                    console.table(answers);
+                    console.log('Role has been added')
+                    promptUser();
+                })
+
 
         })
 
@@ -323,7 +331,7 @@ addDepartment = () => {
                     console.log('Department has been added')
                     promptUser();
                 })
-            
+
         });
 };
 
